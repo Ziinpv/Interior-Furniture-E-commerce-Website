@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Heart, LogOut, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
+  const { user, isAdmin, logout } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/products?search=${searchQuery}`);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setShowUserMenu(false);
+    navigate('/');
   };
 
   const navLinks = [
@@ -79,9 +88,66 @@ export function Header() {
                 2
               </span>
             </button>
-            <button className="p-2 hover:bg-neutral-100 rounded-full transition-colors">
-              <User className="h-6 w-6 text-neutral-700" />
-            </button>
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 p-2 hover:bg-neutral-100 rounded-full transition-colors"
+                >
+                  <div className="w-8 h-8 bg-neutral-900 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm">{user.name.charAt(0)}</span>
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {showUserMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50"
+                    >
+                      <div className="px-4 py-2 border-b border-neutral-100">
+                        <p className="font-medium text-sm">{user.name}</p>
+                        <p className="text-xs text-neutral-500">{user.email}</p>
+                      </div>
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
+                          <Shield className="h-4 w-4" />
+                          Trang quản trị
+                        </Link>
+                      )}
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <User className="h-4 w-4" />
+                        Tài khoản
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Đăng xuất
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors text-sm"
+              >
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">Đăng nhập</span>
+              </Link>
+            )}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 hover:bg-neutral-100 rounded-full transition-colors"
@@ -124,6 +190,23 @@ export function Header() {
                   {link.name}
                 </Link>
               ))}
+              {user ? (
+                <div className="pt-3 border-t border-neutral-200 space-y-2">
+                  <p className="text-sm font-medium">{user.name}</p>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 py-2 text-neutral-700 hover:text-neutral-900 text-sm">
+                      <Shield className="h-4 w-4" /> Trang quản trị
+                    </Link>
+                  )}
+                  <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="flex items-center gap-2 py-2 text-red-600 text-sm">
+                    <LogOut className="h-4 w-4" /> Đăng xuất
+                  </button>
+                </div>
+              ) : (
+                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block py-2 mt-2 text-center bg-neutral-900 text-white rounded-lg text-sm">
+                  Đăng nhập
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
