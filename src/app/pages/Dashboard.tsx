@@ -1,45 +1,25 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router';
 import { Package, Truck, CheckCircle, Clock, Calendar, Settings, User, MapPin, CreditCard } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { useShop } from '../context/ShopContext';
+import type { OrderStatus } from '../types/order';
 
-interface Order {
-  id: string;
-  date: string;
-  items: string[];
-  total: number;
-  status: 'processing' | 'shipping' | 'delivered' | 'cancelled';
-  estimatedDelivery?: string;
-  trackingNumber?: string;
+function formatOrderDate(iso: string) {
+  try {
+    return new Date(iso).toLocaleString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return iso;
+  }
 }
-
-const orders: Order[] = [
-  {
-    id: 'ORD-2026-001',
-    date: '10/03/2026',
-    items: ['Sofa Scandinavian Premium', 'Bàn café gỗ sồi'],
-    total: 28900000,
-    status: 'shipping',
-    estimatedDelivery: '15/03/2026',
-    trackingNumber: 'VN123456789',
-  },
-  {
-    id: 'ORD-2026-002',
-    date: '05/03/2026',
-    items: ['Ghế Armchair Luxury'],
-    total: 12500000,
-    status: 'delivered',
-  },
-  {
-    id: 'ORD-2026-003',
-    date: '01/03/2026',
-    items: ['Bàn làm việc Contemporary', 'Đèn bàn LED'],
-    total: 9500000,
-    status: 'processing',
-    estimatedDelivery: '20/03/2026',
-  },
-];
 
 const warranties = [
   {
@@ -60,9 +40,14 @@ const warranties = [
 
 export function Dashboard() {
   const [showWarrantyModal, setShowWarrantyModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const { orders } = useShop();
 
-  const getStatusColor = (status: Order['status']) => {
+  const sortedOrders = useMemo(
+    () => [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [orders]
+  );
+
+  const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case 'processing':
         return 'bg-yellow-100 text-yellow-800';
@@ -75,7 +60,7 @@ export function Dashboard() {
     }
   };
 
-  const getStatusText = (status: Order['status']) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case 'processing':
         return 'Đang xử lý';
@@ -88,7 +73,7 @@ export function Dashboard() {
     }
   };
 
-  const getStatusIcon = (status: Order['status']) => {
+  const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
       case 'processing':
         return <Clock className="h-5 w-5" />;
@@ -156,18 +141,18 @@ export function Dashboard() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-neutral-600">Tổng đơn hàng</span>
-                  <span className="text-lg">{orders.length}</span>
+                  <span className="text-lg">{sortedOrders.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-neutral-600">Đang giao</span>
                   <span className="text-lg text-blue-600">
-                    {orders.filter((o) => o.status === 'shipping').length}
+                    {sortedOrders.filter((o) => o.status === 'shipping').length}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-neutral-600">Đã giao</span>
                   <span className="text-lg text-green-600">
-                    {orders.filter((o) => o.status === 'delivered').length}
+                    {sortedOrders.filter((o) => o.status === 'delivered').length}
                   </span>
                 </div>
               </div>
@@ -189,7 +174,15 @@ export function Dashboard() {
               </div>
 
               <div className="space-y-4">
-                {orders.map((order, index) => (
+                {sortedOrders.length === 0 ? (
+                  <div className="text-center py-12 border border-dashed border-neutral-200 rounded-lg">
+                    <p className="text-neutral-600 mb-4">Bạn chưa có đơn hàng nào.</p>
+                    <Link to="/products">
+                      <Button>Đi mua sắm</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  sortedOrders.map((order, index) => (
                   <motion.div
                     key={order.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -207,7 +200,7 @@ export function Dashboard() {
                           </span>
                         </div>
                         <p className="text-sm text-neutral-600">
-                          Đặt ngày: {order.date}
+                          Đặt lúc: {formatOrderDate(order.createdAt)}
                         </p>
                         {order.estimatedDelivery && (
                           <p className="text-sm text-neutral-600">
@@ -223,8 +216,10 @@ export function Dashboard() {
                     <div className="mb-4">
                       <p className="text-sm text-neutral-600 mb-2">Sản phẩm:</p>
                       <ul className="space-y-1">
-                        {order.items.map((item) => (
-                          <li key={item} className="text-sm">• {item}</li>
+                        {order.items.map((line) => (
+                          <li key={`${line.productId}-${line.name}-${line.size}`} className="text-sm">
+                            • {line.name} × {line.quantity}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -236,28 +231,31 @@ export function Dashboard() {
                       </div>
                     )}
 
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedOrder(order)}
-                      >
-                        Chi tiết
-                      </Button>
-                      {order.status === 'shipping' && (
+                    <div className="flex flex-wrap gap-3">
+                      <Link to={`/orders/${order.id}`}>
                         <Button variant="outline" size="sm">
-                          <Truck className="h-4 w-4" />
-                          Theo dõi
+                          Chi tiết
                         </Button>
+                      </Link>
+                      {order.status === 'shipping' && (
+                        <Link to={`/orders/${order.id}`}>
+                          <Button variant="outline" size="sm">
+                            <Truck className="h-4 w-4" />
+                            Theo dõi
+                          </Button>
+                        </Link>
                       )}
                       {order.status === 'delivered' && (
-                        <Button variant="outline" size="sm">
-                          Mua lại
-                        </Button>
+                        <Link to="/products">
+                          <Button variant="outline" size="sm">
+                            Mua lại
+                          </Button>
+                        </Link>
                       )}
                     </div>
                   </motion.div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 

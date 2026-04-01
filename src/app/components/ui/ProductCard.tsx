@@ -1,8 +1,10 @@
 import React from 'react';
-import { Heart, Star } from 'lucide-react';
+import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { Product } from '../../data/products';
 import { motion } from 'motion/react';
 import { Link } from 'react-router';
+import { Button } from './Button';
+import { useShop } from '../../context/ShopContext';
 
 interface ProductCardProps {
   product: Product;
@@ -10,7 +12,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = React.useState(false);
+  const { addToCart, isInWishlist, toggleWishlist } = useShop();
+  const isFavorite = isInWishlist(product.id);
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
@@ -34,7 +37,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <button
           onClick={(e) => {
             e.preventDefault();
-            setIsFavorite(!isFavorite);
+            toggleWishlist(product.id);
           }}
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
         >
@@ -83,6 +86,18 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
             />
           ))}
         </div>
+
+        <Button
+          size="sm"
+          className="mt-4 w-full"
+          onClick={() => {
+            addToCart(product);
+            onAddToCart?.(product);
+          }}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Thêm vào giỏ hàng
+        </Button>
       </div>
     </motion.div>
   );

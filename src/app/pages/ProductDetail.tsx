@@ -4,16 +4,18 @@ import { ShoppingCart, Heart, Share2, Star, Check, Truck, Shield, ArrowLeft } fr
 import { products } from '../data/products';
 import { Button } from '../components/ui/Button';
 import { motion } from 'motion/react';
+import { useShop } from '../context/ShopContext';
 
 export function ProductDetail() {
   const { id } = useParams();
   const product = products.find((p) => p.id === id);
+  const { addToCart, isInWishlist, toggleWishlist } = useShop();
 
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedMaterial, setSelectedMaterial] = useState(0);
   const [selectedSize, setSelectedSize] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const isFavorite = product ? isInWishlist(product.id) : false;
 
   if (!product) {
     return (
@@ -110,7 +112,7 @@ export function ProductDetail() {
                 <h1 className="text-4xl mb-4">{product.name}</h1>
               </div>
               <button
-                onClick={() => setIsFavorite(!isFavorite)}
+                onClick={() => toggleWishlist(product.id)}
                 className="p-3 hover:bg-neutral-100 rounded-full transition-colors"
               >
                 <Heart
@@ -262,11 +264,30 @@ export function ProductDetail() {
 
             {/* Actions */}
             <div className="flex gap-4 mb-8">
-              <Button size="lg" className="flex-1">
+              <Button
+                size="lg"
+                className="flex-1"
+                onClick={() =>
+                  addToCart(
+                    product,
+                    {
+                      color: product.colors[selectedColor].name,
+                      material: product.materials[selectedMaterial],
+                      size: product.sizes[selectedSize].name,
+                    },
+                    quantity
+                  )
+                }
+              >
                 <ShoppingCart className="h-5 w-5" />
                 Thêm vào giỏ hàng
               </Button>
-              <Button variant="outline" size="lg">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => window.navigator.clipboard?.writeText(window.location.href)}
+                title="Sao chép link sản phẩm"
+              >
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>

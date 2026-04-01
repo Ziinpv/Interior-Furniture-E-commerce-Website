@@ -12,6 +12,11 @@ import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminProducts } from './pages/admin/AdminProducts';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminCustomers } from './pages/admin/AdminCustomers';
+import { Cart } from './pages/Cart';
+import { Wishlist } from './pages/Wishlist';
+import { Checkout } from './pages/Checkout';
+import { MockVnpayPayment } from './pages/MockVnpayPayment';
+import { OrderDetail } from './pages/OrderDetail';
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +50,26 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         Component: Dashboard,
+      },
+      {
+        path: 'cart',
+        Component: Cart,
+      },
+      {
+        path: 'wishlist',
+        Component: Wishlist,
+      },
+      {
+        path: 'checkout',
+        Component: Checkout,
+      },
+      {
+        path: 'payment/vnpay',
+        Component: MockVnpayPayment,
+      },
+      {
+        path: 'orders/:orderId',
+        Component: OrderDetail,
       },
     ],
   },

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Filter, SlidersHorizontal } from 'lucide-react';
+import { useSearchParams } from 'react-router';
 import { ProductCard } from '../components/ui/ProductCard';
 import { products, categories } from '../data/products';
 import { Button } from '../components/ui/Button';
 
 export function Products() {
+  const [searchParams] = useSearchParams();
+  const searchQuery = (searchParams.get('search') || '').toLowerCase().trim();
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
   const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('Mới nhất');
 
   const filteredProducts = products.filter((product) => {
     if (selectedCategory !== 'Tất cả' && product.category !== selectedCategory) {
@@ -16,7 +20,28 @@ export function Products() {
     if (product.price < priceRange[0] || product.price > priceRange[1]) {
       return false;
     }
+    if (
+      searchQuery &&
+      !`${product.name} ${product.description} ${product.category}`
+        .toLowerCase()
+        .includes(searchQuery)
+    ) {
+      return false;
+    }
     return true;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === 'Giá thấp đến cao') {
+      return a.price - b.price;
+    }
+    if (sortBy === 'Giá cao đến thấp') {
+      return b.price - a.price;
+    }
+    if (sortBy === 'Phổ biến nhất') {
+      return b.reviews - a.reviews;
+    }
+    return Number(b.id) - Number(a.id);
   });
 
   return (
@@ -28,6 +53,11 @@ export function Products() {
           <p className="text-neutral-600">
             Khám phá bộ sưu tập nội thất cao cấp của chúng tôi
           </p>
+          {searchQuery && (
+            <p className="text-sm text-neutral-500 mt-2">
+              Kết quả cho: "{searchQuery}"
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -158,9 +188,13 @@ export function Products() {
           <div className="flex-1">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-neutral-600">
-                Hiển thị {filteredProducts.length} sản phẩm
+                Hiển thị {sortedProducts.length} sản phẩm
               </p>
-              <select className="px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              >
                 <option>Mới nhất</option>
                 <option>Giá thấp đến cao</option>
                 <option>Giá cao đến thấp</option>
@@ -168,9 +202,9 @@ export function Products() {
               </select>
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {sortedProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
+                {sortedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>

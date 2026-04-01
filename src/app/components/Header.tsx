@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { Search, ShoppingCart, User, Menu, X, Heart, LogOut, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
+import { useShop } from '../context/ShopContext';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,6 +11,7 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
   const { user, isAdmin, logout } = useAuth();
+  const { cartCount, wishlistCount } = useShop();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,18 +78,22 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-neutral-100 rounded-full transition-colors relative">
+            <Link to="/wishlist" className="p-2 hover:bg-neutral-100 rounded-full transition-colors relative">
               <Heart className="h-6 w-6 text-neutral-700" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
-            </button>
-            <button className="p-2 hover:bg-neutral-100 rounded-full transition-colors relative">
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+            <Link to="/cart" className="p-2 hover:bg-neutral-100 rounded-full transition-colors relative">
               <ShoppingCart className="h-6 w-6 text-neutral-700" />
-              <span className="absolute -top-1 -right-1 bg-neutral-900 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                2
-              </span>
-            </button>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-neutral-900 text-white text-xs rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
             {user ? (
               <div className="relative">
                 <button
@@ -190,6 +196,24 @@ export function Header() {
                   {link.name}
                 </Link>
               ))}
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Link
+                  to="/wishlist"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 py-2 bg-neutral-100 rounded-lg text-sm text-neutral-700"
+                >
+                  <Heart className="h-4 w-4" />
+                  Yêu thích ({wishlistCount})
+                </Link>
+                <Link
+                  to="/cart"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 py-2 bg-neutral-100 rounded-lg text-sm text-neutral-700"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Giỏ hàng ({cartCount})
+                </Link>
+              </div>
               {user ? (
                 <div className="pt-3 border-t border-neutral-200 space-y-2">
                   <p className="text-sm font-medium">{user.name}</p>

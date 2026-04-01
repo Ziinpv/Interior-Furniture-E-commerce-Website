@@ -141,6 +141,30 @@ export const products: Product[] = [
     inStock: true,
     style: 'Industrial',
   },
+  {
+    id: '7',
+    name: 'Tủ lavabo treo tường Aqua',
+    category: 'Phòng tắm',
+    price: 11900000,
+    originalPrice: 13900000,
+    image: 'https://images.unsplash.com/photo-1584622781564-1d987ba29922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    description:
+      'Tủ lavabo treo tường chống ẩm với thiết kế hiện đại, tối ưu không gian lưu trữ cho phòng tắm gia đình.',
+    colors: [
+      { name: 'Trắng mờ', hex: '#F5F5F5' },
+      { name: 'Gỗ sáng', hex: '#C8B79C' },
+      { name: 'Xám đá', hex: '#9CA3AF' },
+    ],
+    materials: ['Gỗ MDF chống ẩm', 'Mặt đá nhân tạo', 'Phụ kiện inox 304'],
+    sizes: [
+      { name: '80cm', dimensions: '80cm x 46cm x 50cm' },
+      { name: '100cm', dimensions: '100cm x 46cm x 50cm' },
+    ],
+    rating: 4.7,
+    reviews: 43,
+    inStock: true,
+    style: 'Modern',
+  },
 ];
 
 export const categories = [
