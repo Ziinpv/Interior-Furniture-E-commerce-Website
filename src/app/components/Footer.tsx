@@ -11,9 +11,9 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-neutral-900 text-xl">N</span>
+                <span className="text-neutral-900 text-xl">M</span>
               </div>
-              <span className="text-2xl">NoiThat</span>
+              <span className="text-2xl">MBT</span>
             </div>
             <p className="text-neutral-400 text-sm mb-4">
               Nội thất cao cấp cho không gian sống hiện đại của bạn
@@ -126,8 +126,8 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-5 w-5 flex-shrink-0" />
-                <a href="mailto:info@noithat.com" className="hover:text-white transition-colors">
-                  info@noithat.com
+                <a href="mailto:info@mbt.com" className="hover:text-white transition-colors">
+                  info@mbt.com
                 </a>
               </li>
             </ul>
@@ -137,7 +137,7 @@ export function Footer() {
         <div className="border-t border-neutral-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-neutral-400">
-              © 2026 NoiThat. All rights reserved.
+              © 2026 MBT. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-neutral-400">
               <a href="#" className="hover:text-white transition-colors">

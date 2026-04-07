@@ -6,19 +6,42 @@ import { ProductCard } from '../components/ui/ProductCard';
 import { products, styles } from '../data/products';
 import { Button } from '../components/ui/Button';
 import { ConsultationForm } from '../components/ConsultationForm';
+import { FallbackImage } from '../components/ui/FallbackImage';
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from '../components/ui/carousel';
 
 export function Home() {
   const featuredProducts = products.slice(0, 3);
-  const trendingProducts = products.slice(3, 6);
+  const trendingProducts = products;
   const [showConsultation, setShowConsultation] = React.useState(false);
+  const [trendingCarouselApi, setTrendingCarouselApi] = React.useState<CarouselApi>();
+
+  React.useEffect(() => {
+    if (!trendingCarouselApi) return;
+
+    const timer = window.setInterval(() => {
+      if (trendingCarouselApi.canScrollNext()) {
+        trendingCarouselApi.scrollNext();
+      } else {
+        trendingCarouselApi.scrollTo(0);
+      }
+    }, 3000);
+
+    return () => window.clearInterval(timer);
+  }, [trendingCarouselApi]);
 
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative h-[600px] md:h-[700px] overflow-hidden bg-neutral-50">
         <div className="absolute inset-0">
-          <img
+          <FallbackImage
             src="https://images.unsplash.com/photo-1759722667394-000072b59a3a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBtaW5pbWFsaXN0JTIwZnVybml0dXJlJTIwbGl2aW5nJTIwcm9vbXxlbnwxfHx8fDE3NzM0MDMzNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            fallbackSrc="https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=1200&q=80"
             alt="Hero"
             className="w-full h-full object-cover opacity-90"
           />
@@ -77,6 +100,12 @@ export function Home() {
                 transition={{ delay: index * 0.1 }}
                 className="group relative overflow-hidden rounded-lg bg-neutral-100 aspect-[4/3] cursor-pointer"
               >
+                <FallbackImage
+                  src={style.image}
+                  fallbackSrc="https://picsum.photos/seed/mbt-style-fallback/1200/900"
+                  alt={style.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent group-hover:from-black/80 transition-all" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                   <h3 className="text-2xl mb-2">{style.name}</h3>
@@ -176,19 +205,25 @@ export function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {trendingProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
+          <Carousel setApi={setTrendingCarouselApi} opts={{ align: 'start', loop: false }}>
+            <CarouselContent>
+              {trendingProducts.map((product, index) => (
+                <CarouselItem
+                  key={product.id}
+                  className="basis-full md:basis-1/2 lg:basis-1/3"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <ProductCard product={product} />
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </section>
 

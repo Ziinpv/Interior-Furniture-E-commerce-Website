@@ -33,10 +33,10 @@ export function AdminLayout() {
         <div className="p-6 border-b border-neutral-800">
           <NavLink to="/" className="flex items-center gap-2">
             <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-neutral-900 text-lg font-bold">N</span>
+              <span className="text-neutral-900 text-lg font-bold">M</span>
             </div>
             <div>
-              <span className="text-lg tracking-tight">NoiThat</span>
+              <span className="text-lg tracking-tight">MBT</span>
               <span className="block text-xs text-neutral-400">Admin Panel</span>
             </div>
           </NavLink>
@@ -114,7 +114,7 @@ export function AdminLayout() {
               className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-neutral-900 text-white z-50 flex flex-col"
             >
               <div className="p-4 flex items-center justify-between border-b border-neutral-800">
-                <span className="text-lg">NoiThat Admin</span>
+                <span className="text-lg">MBT Admin</span>
                 <button onClick={() => setSidebarOpen(false)} className="p-2 hover:bg-neutral-800 rounded-lg">
                   <X className="h-5 w-5" />
                 </button>

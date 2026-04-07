@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
+import { FallbackImage } from '../components/ui/FallbackImage';
 
 export function Login() {
   const { login } = useAuth();
@@ -31,14 +32,15 @@ export function Login() {
     <div className="min-h-screen bg-neutral-50 flex">
       {/* Left - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
-        <img
-          src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200"
+        <FallbackImage
+          src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1600"
+          fallbackSrc="https://picsum.photos/seed/mbt-login-fallback/1600/1200"
           alt="Interior"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40 flex items-end p-12">
           <div className="text-white">
-            <h2 className="text-4xl mb-4">NoiThat</h2>
+            <h2 className="text-4xl mb-4">MBT</h2>
             <p className="text-lg text-white/80 max-w-md">
               Không gian sống tinh tế & hiện đại. Khám phá bộ sưu tập nội thất cao cấp.
             </p>
@@ -55,9 +57,9 @@ export function Login() {
         >
           <Link to="/" className="flex items-center gap-2 mb-12">
             <div className="w-10 h-10 bg-neutral-900 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xl">N</span>
+              <span className="text-white text-xl">M</span>
             </div>
-            <span className="text-2xl tracking-tight">NoiThat</span>
+            <span className="text-2xl tracking-tight">MBT</span>
           </Link>
 
           <h1 className="text-3xl mb-2">Đăng nhập</h1>

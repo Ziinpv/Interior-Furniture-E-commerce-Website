@@ -41,9 +41,9 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-neutral-900 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xl">N</span>
+              <span className="text-white text-xl">M</span>
             </div>
-            <span className="text-2xl tracking-tight hidden sm:block">NoiThat</span>
+            <span className="text-2xl tracking-tight hidden sm:block">MBT</span>
           </Link>
 
           {/* Desktop Navigation */}

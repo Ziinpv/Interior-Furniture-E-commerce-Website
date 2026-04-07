@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router';
 import { Button } from './Button';
 import { useShop } from '../../context/ShopContext';
+import { FallbackImage } from './FallbackImage';
 
 interface ProductCardProps {
   product: Product;
@@ -24,8 +25,9 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group"
     >
       <Link to={`/products/${product.id}`} className="block relative overflow-hidden bg-neutral-100 aspect-square">
-        <img
+        <FallbackImage
           src={product.image}
+          fallbackSrc="https://picsum.photos/seed/mbt-product-card-fallback/1200/900"
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -84,6 +86,16 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
               style={{ backgroundColor: color.hex }}
               title={color.name}
             />
+          ))}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {product.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="px-2 py-1 text-xs rounded-full bg-neutral-100 text-neutral-700"
+            >
+              #{tag}
+            </span>
           ))}
         </div>
 

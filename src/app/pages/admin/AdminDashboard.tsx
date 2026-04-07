@@ -3,6 +3,7 @@ import { DollarSign, ShoppingCart, Users, Package, TrendingUp } from 'lucide-rea
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { apiFetch } from '../../lib/api';
+import { products as localProducts } from '../../data/products';
 
 interface Stats {
   totalRevenue: number;
@@ -42,11 +43,26 @@ function formatVND(n: number) {
 export function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fallbackStats: Stats = {
+    totalRevenue: 0,
+    totalOrders: 0,
+    totalCustomers: 0,
+    totalProducts: localProducts.length,
+    statusCount: { processing: 0, shipping: 0, delivered: 0, cancelled: 0 },
+    revenueChart: [],
+    topProducts: [],
+    recentOrders: [],
+  };
 
   useEffect(() => {
     apiFetch<Stats>('/stats')
       .then(setStats)
-      .catch(console.error)
+      .catch(() => {
+        setError('Không thể kết nối API /api/stats. Vui lòng chạy backend server.');
+        setStats(fallbackStats);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -74,6 +90,11 @@ export function AdminDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl font-semibold">Tổng quan</h1>
         <p className="text-neutral-500 mt-1">Xin chào! Đây là tình hình kinh doanh hôm nay.</p>
+        {error && (
+          <div className="mt-3 text-sm px-3 py-2 rounded-md border border-amber-200 bg-amber-50 text-amber-700">
+            {error}
+          </div>
+        )}
       </div>
 
       {/* Stat Cards */}

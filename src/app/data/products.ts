@@ -13,6 +13,7 @@ export interface Product {
   reviews: number;
   inStock: boolean;
   style: string;
+  tags: string[];
 }
 
 export const products: Product[] = [
@@ -22,7 +23,7 @@ export const products: Product[] = [
     category: 'Phòng khách',
     price: 25900000,
     originalPrice: 32000000,
-    image: 'https://images.unsplash.com/photo-1753791913941-efa7de4e1b5c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBpbnRlcmlvciUyMGRlc2lnbiUyMHNvZmF8ZW58MXx8fHwxNzczNDAzMzY3fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80',
     description: 'Sofa phong cách Scandinavian với thiết kế tối giản, chất liệu vải bền đẹp và đệm êm ái. Phù hợp cho không gian hiện đại.',
     colors: [
       { name: 'Xám nhạt', hex: '#D3D3D3' },
@@ -38,13 +39,14 @@ export const products: Product[] = [
     reviews: 124,
     inStock: true,
     style: 'Scandinavian',
+    tags: ['Scandinavian', 'Tối giản', 'Flat-pack', 'Phòng nhỏ'],
   },
   {
     id: '2',
     name: 'Ghế Armchair Luxury',
     category: 'Phòng khách',
     price: 12500000,
-    image: 'https://images.unsplash.com/photo-1768946131536-39b5f3ec329d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBmdXJuaXR1cmUlMjBjaGFpciUyMGJlaWdlfGVufDF8fHx8MTc3MzQwMzM2N3ww&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=1200&q=80',
     description: 'Ghế armchair cao cấp với thiết kế sang trọng, tay vịn êm ái. Hoàn hảo cho không gian đọc sách.',
     colors: [
       { name: 'Be', hex: '#F5F5DC' },
@@ -57,13 +59,14 @@ export const products: Product[] = [
     reviews: 87,
     inStock: true,
     style: 'Modern',
+    tags: ['Modern', 'Sang trọng', 'Êm ái', 'Tối ưu góc đọc sách'],
   },
   {
     id: '3',
     name: 'Bàn ăn gỗ Modern',
     category: 'Phòng ăn',
     price: 18900000,
-    image: 'https://images.unsplash.com/photo-1758977404096-20d813c73329?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBkaW5pbmclMjB0YWJsZSUyMHdvb2R8ZW58MXx8fHwxNzczNDAzMzY4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1617098907765-95f0d2f2f2c8?auto=format&fit=crop&w=1200&q=80',
     description: 'Bàn ăn gỗ tự nhiên với thiết kế hiện đại, mặt bàn rộng rãi cho gia đình 6-8 người.',
     colors: [
       { name: 'Gỗ tự nhiên', hex: '#8B7355' },
@@ -78,13 +81,14 @@ export const products: Product[] = [
     reviews: 95,
     inStock: true,
     style: 'Modern',
+    tags: ['Modern', 'Gỗ tự nhiên', 'Gia đình 6-8 người', 'Bền chắc'],
   },
   {
     id: '4',
     name: 'Giường ngủ Minimalist',
     category: 'Phòng ngủ',
     price: 22000000,
-    image: 'https://images.unsplash.com/photo-1586310520462-658e93388399?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwYmVkcm9vbSUyMGZ1cm5pdHVyZXxlbnwxfHx8fDE3NzMzNDMxNjV8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
     description: 'Giường ngủ phong cách tối giản với đầu giường bọc nệm, thiết kế tinh tế và sang trọng.',
     colors: [
       { name: 'Trắng', hex: '#FFFFFF' },
@@ -100,13 +104,14 @@ export const products: Product[] = [
     reviews: 78,
     inStock: true,
     style: 'Minimalist',
+    tags: ['Minimalist', 'Ngủ sâu', 'Tông trung tính', 'Dễ phối'],
   },
   {
     id: '5',
     name: 'Bàn làm việc Contemporary',
     category: 'Phòng làm việc',
     price: 8900000,
-    image: 'https://images.unsplash.com/photo-1764755932155-dabbee87df7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW1wb3JhcnklMjBvZmZpY2UlMjBkZXNrJTIwc2V0dXB8ZW58MXx8fHwxNzczNDAzMzY4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=1200&q=80',
     description: 'Bàn làm việc hiện đại với ngăn kéo tiện dụng, thiết kế gọn gàng phù hợp cho văn phòng tại nhà.',
     colors: [
       { name: 'Đen', hex: '#000000' },
@@ -119,13 +124,14 @@ export const products: Product[] = [
     reviews: 62,
     inStock: true,
     style: 'Contemporary',
+    tags: ['Contemporary', 'Làm việc tại nhà', 'Gọn gàng', 'Tiết kiệm diện tích'],
   },
   {
     id: '6',
     name: 'Kệ sách Modern Industrial',
     category: 'Phòng làm việc',
     price: 15500000,
-    image: 'https://images.unsplash.com/photo-1756037020659-6f9d3418f6b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBib29rc2hlbGYlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NzM0MDMzNjl8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1594620302200-9a762244a156?auto=format&fit=crop&w=1200&q=80',
     description: 'Kệ sách kết hợp gỗ và kim loại, phong cách industrial hiện đại với nhiều ngăn lưu trữ.',
     colors: [
       { name: 'Gỗ tự nhiên + Đen', hex: '#8B7355' },
@@ -140,6 +146,7 @@ export const products: Product[] = [
     reviews: 56,
     inStock: true,
     style: 'Industrial',
+    tags: ['Industrial', 'Lưu trữ lớn', 'Khung thép', 'Cá tính'],
   },
   {
     id: '7',
@@ -147,7 +154,7 @@ export const products: Product[] = [
     category: 'Phòng tắm',
     price: 11900000,
     originalPrice: 13900000,
-    image: 'https://images.unsplash.com/photo-1584622781564-1d987ba29922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80',
     description:
       'Tủ lavabo treo tường chống ẩm với thiết kế hiện đại, tối ưu không gian lưu trữ cho phòng tắm gia đình.',
     colors: [
@@ -164,6 +171,7 @@ export const products: Product[] = [
     reviews: 43,
     inStock: true,
     style: 'Modern',
+    tags: ['Modern', 'Chống ẩm', 'Phòng tắm nhỏ', 'Dễ vệ sinh'],
   },
 ];
 
@@ -177,9 +185,29 @@ export const categories = [
 ];
 
 export const styles = [
-  { name: 'Scandinavian', description: 'Tối giản, sáng, tự nhiên' },
-  { name: 'Modern', description: 'Hiện đại, tinh tế, sang trọng' },
-  { name: 'Minimalist', description: 'Tối giản, gọn gàng, tinh khiết' },
-  { name: 'Indochine', description: 'Đông Dương, cổ điển, ấm cúng' },
-  { name: 'Industrial', description: 'Công nghiệp, kim loại, cá tính' },
+  {
+    name: 'Scandinavian',
+    description: 'Tối giản, sáng, tự nhiên',
+    image: 'https://images.unsplash.com/photo-1616594039964-3d0d6f8dcf58?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    name: 'Modern',
+    description: 'Hiện đại, tinh tế, sang trọng',
+    image: 'https://images.unsplash.com/photo-1616137466211-f939a420be84?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    name: 'Minimalist',
+    description: 'Tối giản, gọn gàng, tinh khiết',
+    image: 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    name: 'Indochine',
+    description: 'Đông Dương, cổ điển, ấm cúng',
+    image: 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    name: 'Industrial',
+    description: 'Công nghiệp, kim loại, cá tính',
+    image: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=1200&q=80',
+  },
 ];

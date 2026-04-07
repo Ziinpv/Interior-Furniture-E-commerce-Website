@@ -1,48 +1,87 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Filter, SlidersHorizontal } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { ProductCard } from '../components/ui/ProductCard';
-import { products, categories } from '../data/products';
+import { products as localProducts, categories } from '../data/products';
 import { Button } from '../components/ui/Button';
+import { apiFetch } from '../lib/api';
 
 export function Products() {
   const [searchParams] = useSearchParams();
   const searchQuery = (searchParams.get('search') || '').toLowerCase().trim();
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [selectedStyle, setSelectedStyle] = useState('Tất cả');
+  const [selectedTag, setSelectedTag] = useState('Tất cả');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('Mới nhất');
+  const [apiProducts, setApiProducts] = useState(localProducts);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const filteredProducts = products.filter((product) => {
-    if (selectedCategory !== 'Tất cả' && product.category !== selectedCategory) {
-      return false;
-    }
-    if (product.price < priceRange[0] || product.price > priceRange[1]) {
-      return false;
-    }
-    if (
-      searchQuery &&
-      !`${product.name} ${product.description} ${product.category}`
-        .toLowerCase()
-        .includes(searchQuery)
-    ) {
-      return false;
-    }
-    return true;
-  });
+  const styleOptions = [
+    'Tất cả',
+    ...Array.from(new Set(localProducts.map((product) => product.style))),
+  ];
+  const tagOptions = [
+    'Tất cả',
+    ...Array.from(new Set(localProducts.flatMap((product) => product.tags))),
+  ];
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === 'Giá thấp đến cao') {
-      return a.price - b.price;
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('search', searchQuery);
+    if (selectedCategory !== 'Tất cả') params.set('category', selectedCategory);
+    if (selectedStyle !== 'Tất cả') params.set('style', selectedStyle);
+    if (selectedTag !== 'Tất cả') params.set('tag', selectedTag);
+    params.set('minPrice', String(priceRange[0]));
+    params.set('maxPrice', String(priceRange[1]));
+
+    if (sortBy === 'Giá thấp đến cao') params.set('sort', 'price-asc');
+    if (sortBy === 'Giá cao đến thấp') params.set('sort', 'price-desc');
+    if (sortBy === 'Phổ biến nhất') params.set('sort', 'rating');
+
+    setIsLoading(true);
+    apiFetch<typeof localProducts>(`/products?${params.toString()}`)
+      .then((data) => {
+        setApiProducts(data);
+        setApiError(null);
+      })
+      .catch(() => {
+        // Fallback to static data for local demo if API is not available.
+        const fallback = localProducts.filter((product) => {
+          if (selectedCategory !== 'Tất cả' && product.category !== selectedCategory) return false;
+          if (selectedStyle !== 'Tất cả' && product.style !== selectedStyle) return false;
+          if (selectedTag !== 'Tất cả' && !product.tags.includes(selectedTag)) return false;
+          if (product.price < priceRange[0] || product.price > priceRange[1]) return false;
+          if (
+            searchQuery &&
+            !`${product.name} ${product.description} ${product.category}`
+              .toLowerCase()
+              .includes(searchQuery)
+          ) {
+            return false;
+          }
+          return true;
+        });
+        const sortedFallback = [...fallback].sort((a, b) => {
+          if (sortBy === 'Giá thấp đến cao') return a.price - b.price;
+          if (sortBy === 'Giá cao đến thấp') return b.price - a.price;
+          if (sortBy === 'Phổ biến nhất') return b.reviews - a.reviews;
+          return Number(b.id) - Number(a.id);
+        });
+        setApiProducts(sortedFallback);
+        setApiError('Không kết nối được API, đang hiển thị dữ liệu local.');
+      })
+      .finally(() => setIsLoading(false));
+  }, [searchQuery, selectedCategory, selectedStyle, selectedTag, priceRange, sortBy]);
+
+  const sortedProducts = useMemo(() => {
+    if (sortBy === 'Mới nhất') {
+      return [...apiProducts].sort((a, b) => Number(b.id) - Number(a.id));
     }
-    if (sortBy === 'Giá cao đến thấp') {
-      return b.price - a.price;
-    }
-    if (sortBy === 'Phổ biến nhất') {
-      return b.reviews - a.reviews;
-    }
-    return Number(b.id) - Number(a.id);
-  });
+    return apiProducts;
+  }, [apiProducts, sortBy]);
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -58,6 +97,7 @@ export function Products() {
               Kết quả cho: "{searchQuery}"
             </p>
           )}
+          {apiError && <p className="text-sm text-amber-600 mt-2">{apiError}</p>}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -107,12 +147,48 @@ export function Products() {
                 </div>
               </div>
 
+              <div className="mb-6">
+                <h3 className="text-sm mb-3 text-neutral-700">Phong cách</h3>
+                <select
+                  value={selectedStyle}
+                  onChange={(e) => setSelectedStyle(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                >
+                  {styleOptions.map((style) => (
+                    <option key={style} value={style}>
+                      {style}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-sm mb-3 text-neutral-700">Tag</h3>
+                <div className="flex flex-wrap gap-2">
+                  {tagOptions.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => setSelectedTag(tag)}
+                      className={`px-3 py-1 rounded-full text-xs transition-colors ${
+                        selectedTag === tag
+                          ? 'bg-neutral-900 text-white'
+                          : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Reset */}
               <Button
                 variant="outline"
                 className="w-full"
                 onClick={() => {
                   setSelectedCategory('Tất cả');
+                  setSelectedStyle('Tất cả');
+                  setSelectedTag('Tất cả');
                   setPriceRange([0, 50000000]);
                 }}
               >
@@ -170,11 +246,47 @@ export function Products() {
                   </div>
                 </div>
 
+                <div className="mb-6">
+                  <h3 className="text-sm mb-3 text-neutral-700">Phong cách</h3>
+                  <select
+                    value={selectedStyle}
+                    onChange={(e) => setSelectedStyle(e.target.value)}
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  >
+                    {styleOptions.map((style) => (
+                      <option key={style} value={style}>
+                        {style}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="mb-6">
+                  <h3 className="text-sm mb-3 text-neutral-700">Tag</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {tagOptions.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => setSelectedTag(tag)}
+                        className={`px-3 py-1 rounded-full text-xs transition-colors ${
+                          selectedTag === tag
+                            ? 'bg-neutral-900 text-white'
+                            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <Button
                   variant="outline"
                   className="w-full"
                   onClick={() => {
                     setSelectedCategory('Tất cả');
+                    setSelectedStyle('Tất cả');
+                    setSelectedTag('Tất cả');
                     setPriceRange([0, 50000000]);
                   }}
                 >
@@ -188,7 +300,7 @@ export function Products() {
           <div className="flex-1">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-neutral-600">
-                Hiển thị {sortedProducts.length} sản phẩm
+                {isLoading ? 'Đang tải sản phẩm...' : `Hiển thị ${sortedProducts.length} sản phẩm`}
               </p>
               <select
                 value={sortBy}

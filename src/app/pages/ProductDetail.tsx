@@ -5,6 +5,7 @@ import { products } from '../data/products';
 import { Button } from '../components/ui/Button';
 import { motion } from 'motion/react';
 import { useShop } from '../context/ShopContext';
+import { FallbackImage } from '../components/ui/FallbackImage';
 
 export function ProductDetail() {
   const { id } = useParams();
@@ -80,8 +81,9 @@ export function ProductDetail() {
               animate={{ opacity: 1 }}
               className="aspect-square bg-neutral-100 rounded-lg overflow-hidden mb-4"
             >
-              <img
+              <FallbackImage
                 src={product.colors[selectedColor].image || product.image}
+                fallbackSrc="https://picsum.photos/seed/mbt-product-detail-fallback/1200/900"
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -92,8 +94,9 @@ export function ProductDetail() {
                   key={i}
                   className="aspect-square bg-neutral-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
                 >
-                  <img
+                  <FallbackImage
                     src={product.image}
+                    fallbackSrc="https://picsum.photos/seed/mbt-product-thumb-fallback/600/600"
                     alt={`${product.name} ${i}`}
                     className="w-full h-full object-cover"
                   />
@@ -162,6 +165,16 @@ export function ProductDetail() {
             </div>
 
             <p className="text-neutral-700 mb-8 leading-relaxed">{product.description}</p>
+            <div className="mb-8 flex flex-wrap gap-2">
+              {product.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3 py-1 rounded-full text-sm bg-neutral-100 text-neutral-700"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
 
             {/* Customizer */}
             <div className="space-y-6 mb-8">

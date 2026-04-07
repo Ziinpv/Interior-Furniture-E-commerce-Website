@@ -111,62 +111,79 @@ function initData() {
       {
         id: '1', name: 'Sofa Scandinavian Premium', category: 'Phòng khách',
         price: 25900000, originalPrice: 32000000,
-        image: 'https://images.unsplash.com/photo-1753791913941-efa7de4e1b5c?w=1080',
+        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80',
         description: 'Sofa phong cách Scandinavian với thiết kế tối giản, chất liệu vải bền đẹp và đệm êm ái.',
         colors: [{ name: 'Xám nhạt', hex: '#D3D3D3' }, { name: 'Be', hex: '#F5F5DC' }, { name: 'Xanh dương nhạt', hex: '#B0C4DE' }],
         materials: ['Vải bố cao cấp', 'Khung gỗ sồi', 'Đệm foam memory'],
         sizes: [{ name: '2 chỗ', dimensions: '180x90x85cm' }, { name: '3 chỗ', dimensions: '220x90x85cm' }],
         rating: 4.8, reviews: 124, inStock: true, style: 'Scandinavian',
+        tags: ['Scandinavian', 'Tối giản', 'Flat-pack', 'Phòng nhỏ'],
       },
       {
         id: '2', name: 'Ghế Armchair Luxury', category: 'Phòng khách',
         price: 12500000, originalPrice: null,
-        image: 'https://images.unsplash.com/photo-1768946131536-39b5f3ec329d?w=1080',
+        image: 'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=1200&q=80',
         description: 'Ghế armchair cao cấp với thiết kế sang trọng, tay vịn êm ái.',
         colors: [{ name: 'Be', hex: '#F5F5DC' }, { name: 'Xám đậm', hex: '#696969' }, { name: 'Nâu caramel', hex: '#C68E63' }],
         materials: ['Vải nhung cao cấp', 'Khung gỗ ash', 'Đệm mút đàn hồi'],
         sizes: [{ name: 'Standard', dimensions: '80x85x95cm' }],
         rating: 4.9, reviews: 87, inStock: true, style: 'Modern',
+        tags: ['Modern', 'Sang trọng', 'Êm ái', 'Tối ưu góc đọc sách'],
       },
       {
         id: '3', name: 'Bàn ăn gỗ Modern', category: 'Phòng ăn',
         price: 18900000, originalPrice: null,
-        image: 'https://images.unsplash.com/photo-1758977404096-20d813c73329?w=1080',
+        image: 'https://images.unsplash.com/photo-1617098907765-95f0d2f2f2c8?auto=format&fit=crop&w=1200&q=80',
         description: 'Bàn ăn gỗ tự nhiên với thiết kế hiện đại, mặt bàn rộng rãi cho gia đình 6-8 người.',
         colors: [{ name: 'Gỗ tự nhiên', hex: '#8B7355' }, { name: 'Gỗ walnut', hex: '#5C4033' }],
         materials: ['Gỗ sồi Mỹ', 'Sơn PU cao cấp'],
         sizes: [{ name: '6 chỗ', dimensions: '160x90x75cm' }, { name: '8 chỗ', dimensions: '200x100x75cm' }],
         rating: 4.7, reviews: 95, inStock: true, style: 'Modern',
+        tags: ['Modern', 'Gỗ tự nhiên', 'Gia đình 6-8 người', 'Bền chắc'],
       },
       {
         id: '4', name: 'Giường ngủ Minimalist', category: 'Phòng ngủ',
         price: 22000000, originalPrice: null,
-        image: 'https://images.unsplash.com/photo-1586310520462-658e93388399?w=1080',
+        image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
         description: 'Giường ngủ phong cách tối giản với đầu giường bọc nệm, thiết kế tinh tế.',
         colors: [{ name: 'Trắng', hex: '#FFFFFF' }, { name: 'Xám', hex: '#808080' }, { name: 'Be', hex: '#F5F5DC' }],
         materials: ['Gỗ công nghiệp MDF', 'Vải bọc nhung', 'Sơn chống trầy'],
         sizes: [{ name: '1m6', dimensions: '160x200cm' }, { name: '1m8', dimensions: '180x200cm' }],
         rating: 4.6, reviews: 78, inStock: true, style: 'Minimalist',
+        tags: ['Minimalist', 'Ngủ sâu', 'Tông trung tính', 'Dễ phối'],
       },
       {
         id: '5', name: 'Bàn làm việc Contemporary', category: 'Phòng làm việc',
         price: 8900000, originalPrice: null,
-        image: 'https://images.unsplash.com/photo-1764755932155-dabbee87df7e?w=1080',
+        image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=1200&q=80',
         description: 'Bàn làm việc hiện đại với ngăn kéo tiện dụng.',
         colors: [{ name: 'Đen', hex: '#000000' }, { name: 'Trắng', hex: '#FFFFFF' }, { name: 'Gỗ sồi', hex: '#B5A88D' }],
         materials: ['Gỗ MDF phủ melamine', 'Chân thép sơn tĩnh điện'],
         sizes: [{ name: 'Standard', dimensions: '120x60x75cm' }],
         rating: 4.5, reviews: 62, inStock: true, style: 'Contemporary',
+        tags: ['Contemporary', 'Làm việc tại nhà', 'Gọn gàng', 'Tiết kiệm diện tích'],
       },
       {
         id: '6', name: 'Kệ sách Modern Industrial', category: 'Phòng làm việc',
         price: 15500000, originalPrice: null,
-        image: 'https://images.unsplash.com/photo-1756037020659-6f9d3418f6b6?w=1080',
+        image: 'https://images.unsplash.com/photo-1594620302200-9a762244a156?auto=format&fit=crop&w=1200&q=80',
         description: 'Kệ sách kết hợp gỗ và kim loại, phong cách industrial hiện đại.',
         colors: [{ name: 'Gỗ tự nhiên + Đen', hex: '#8B7355' }, { name: 'Gỗ walnut + Xám', hex: '#5C4033' }],
         materials: ['Gỗ công nghiệp cao cấp', 'Khung thép sơn tĩnh điện'],
         sizes: [{ name: 'Medium', dimensions: '120x40x180cm' }, { name: 'Large', dimensions: '160x40x200cm' }],
         rating: 4.8, reviews: 56, inStock: true, style: 'Industrial',
+        tags: ['Industrial', 'Lưu trữ lớn', 'Khung thép', 'Cá tính'],
+      },
+      {
+        id: '7', name: 'Tủ lavabo treo tường Aqua', category: 'Phòng tắm',
+        price: 11900000, originalPrice: 13900000,
+        image: 'https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80',
+        description: 'Tủ lavabo treo tường chống ẩm với thiết kế hiện đại, tối ưu không gian lưu trữ cho phòng tắm gia đình.',
+        colors: [{ name: 'Trắng mờ', hex: '#F5F5F5' }, { name: 'Gỗ sáng', hex: '#C8B79C' }, { name: 'Xám đá', hex: '#9CA3AF' }],
+        materials: ['Gỗ MDF chống ẩm', 'Mặt đá nhân tạo', 'Phụ kiện inox 304'],
+        sizes: [{ name: '80cm', dimensions: '80x46x50cm' }, { name: '100cm', dimensions: '100x46x50cm' }],
+        rating: 4.7, reviews: 43, inStock: true, style: 'Modern',
+        tags: ['Modern', 'Chống ẩm', 'Phòng tắm nhỏ', 'Dễ vệ sinh'],
       },
     ]);
   }
@@ -282,7 +299,7 @@ app.get('/api/auth/me', auth, (req, res) => {
 
 app.get('/api/products', (req, res) => {
   let products = read('products.json');
-  const { search, category, style, minPrice, maxPrice, sort } = req.query;
+  const { search, category, style, tag, minPrice, maxPrice, sort } = req.query;
 
   if (search) {
     const q = search.toLowerCase();
@@ -290,6 +307,7 @@ app.get('/api/products', (req, res) => {
   }
   if (category && category !== 'Tất cả') products = products.filter(p => p.category === category);
   if (style) products = products.filter(p => p.style === style);
+  if (tag && tag !== 'Tất cả') products = products.filter(p => (p.tags || []).includes(tag));
   if (minPrice) products = products.filter(p => p.price >= Number(minPrice));
   if (maxPrice) products = products.filter(p => p.price <= Number(maxPrice));
 
