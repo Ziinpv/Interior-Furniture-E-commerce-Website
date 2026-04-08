@@ -6,6 +6,7 @@ import { Input } from '../components/ui/Input';
 import { products } from '../data/products';
 import { useShop } from '../context/ShopContext';
 import type { PaymentMethod } from '../types/order';
+import { apiFetch } from '../lib/api';
 
 export function Checkout() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export function Checkout() {
     return { subtotal, shippingFee, total: subtotal + shippingFee };
   }, [cartItems]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -41,6 +42,21 @@ export function Checkout() {
     }
 
     setSubmitting(true);
+    const serverPayloadItems = cartItems
+      .map((row) => {
+        const product = products.find((p) => p.id === row.productId);
+        if (!product) {
+          return null;
+        }
+        return {
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: row.quantity,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
     const order = placeOrder({
       customerName,
       phone,
@@ -56,11 +72,34 @@ export function Checkout() {
       return;
     }
 
-    if (paymentMethod === 'vnpay') {
-      navigate(`/payment/vnpay?orderId=${encodeURIComponent(order.id)}`);
-    } else {
-      navigate(`/orders/${order.id}?thankYou=1`);
+    let serverOrderId: string | null = null;
+    try {
+      const serverOrder = await apiFetch<{ id: string }>('/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          items: serverPayloadItems,
+          total: summary.total,
+          paymentMethod: paymentMethod === 'vnpay' ? 'VNPay (demo)' : 'COD',
+          shippingAddress: address,
+          note,
+          phone,
+        }),
+      });
+      serverOrderId = serverOrder.id;
+    } catch {
+      // Keep local order flow for demo mode when API is unavailable.
     }
+
+    if (paymentMethod === 'vnpay') {
+      const query = new URLSearchParams({ orderId: order.id });
+      if (serverOrderId) {
+        query.set('serverOrderId', serverOrderId);
+      }
+      navigate(`/payment/vnpay?${query.toString()}`);
+    } else {
+      navigate(`/orders/${serverOrderId || order.id}?thankYou=1`);
+    }
+    setSubmitting(false);
   };
 
   if (cartItems.length === 0) {

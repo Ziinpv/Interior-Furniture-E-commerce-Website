@@ -6,6 +6,7 @@ import { useShop } from '../context/ShopContext';
 export function MockVnpayPayment() {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId') || '';
+  const serverOrderId = searchParams.get('serverOrderId') || '';
   const navigate = useNavigate();
   const { orders, completeVnpayPayment } = useShop();
   const [message, setMessage] = useState('Đang kết nối tới cổng VNPay (mô phỏng)...');
@@ -34,14 +35,14 @@ export function MockVnpayPayment() {
       }
       completeVnpayPayment(orderId);
       setMessage('Thanh toán thành công. Đang chuyển hướng...');
-      navigate(`/orders/${orderId}?thankYou=1`, { replace: true });
+      navigate(`/orders/${serverOrderId || orderId}?thankYou=1`, { replace: true });
     }, 2200);
 
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [orderId, navigate, orders, completeVnpayPayment]);
+  }, [orderId, serverOrderId, navigate, orders, completeVnpayPayment]);
 
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 bg-neutral-50">

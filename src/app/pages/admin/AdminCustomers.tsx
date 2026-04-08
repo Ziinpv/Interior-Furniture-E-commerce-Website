@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Mail, Phone, MapPin, ShoppingBag } from 'lucide-react';
+import { Search, Mail, Phone, MapPin, ShoppingBag, RefreshCcw } from 'lucide-react';
 import { motion } from 'motion/react';
 import { apiFetch } from '../../lib/api';
 
@@ -27,12 +27,22 @@ export function AdminCustomers() {
   const [users, setUsers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true);
+    setError(null);
     apiFetch<Customer[]>('/users')
       .then(data => setUsers(data.filter(u => u.role === 'customer')))
-      .catch(console.error)
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Không thể tải danh sách khách hàng.');
+        setUsers([]);
+      })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    load();
   }, []);
 
   const filtered = users.filter(u =>
@@ -57,6 +67,18 @@ export function AdminCustomers() {
           className="w-full pl-10 pr-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm"
         />
       </div>
+      {error && (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          <span>{error}</span>
+          <button
+            onClick={load}
+            className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-amber-800 border border-amber-200 hover:bg-amber-100"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            Tải lại
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-20">

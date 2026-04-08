@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { Package, Truck, CheckCircle, Clock, Calendar, Settings, User, MapPin, CreditCard } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { useShop } from '../context/ShopContext';
 import type { OrderStatus } from '../types/order';
+import { apiFetch } from '../lib/api';
 
 function formatOrderDate(iso: string) {
   try {
@@ -41,10 +42,40 @@ const warranties = [
 export function Dashboard() {
   const [showWarrantyModal, setShowWarrantyModal] = useState(false);
   const { orders } = useShop();
+  const [apiOrders, setApiOrders] = useState<Array<{
+    id: string;
+    createdAt: string;
+    total: number;
+    status: OrderStatus;
+    estimatedDelivery?: string;
+    trackingNumber?: string;
+    items: Array<{ name: string; quantity: number; productId?: string }>;
+  }> | null>(null);
+
+  useEffect(() => {
+    apiFetch<Array<{
+      id: string;
+      createdAt: string;
+      total: number;
+      status: OrderStatus;
+      estimatedDelivery?: string;
+      trackingNumber?: string;
+      items: Array<{ name: string; quantity: number; productId?: string }>;
+    }>>('/orders')
+      .then(setApiOrders)
+      .catch(() => setApiOrders(null));
+  }, []);
+
+  const mergedOrders = useMemo(() => {
+    if (apiOrders && apiOrders.length > 0) {
+      return apiOrders;
+    }
+    return orders;
+  }, [apiOrders, orders]);
 
   const sortedOrders = useMemo(
-    () => [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
-    [orders]
+    () => [...mergedOrders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [mergedOrders]
   );
 
   const getStatusColor = (status: OrderStatus) => {
@@ -216,8 +247,8 @@ export function Dashboard() {
                     <div className="mb-4">
                       <p className="text-sm text-neutral-600 mb-2">Sản phẩm:</p>
                       <ul className="space-y-1">
-                        {order.items.map((line) => (
-                          <li key={`${line.productId}-${line.name}-${line.size}`} className="text-sm">
+                        {order.items.map((line, lineIndex) => (
+                          <li key={`${line.productId || lineIndex}-${line.name}`} className="text-sm">
                             • {line.name} × {line.quantity}
                           </li>
                         ))}

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { ArrowLeft, CheckCircle2, Circle, Package, Truck, CreditCard, Wallet } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useShop } from '../context/ShopContext';
 import type { OrderStatus } from '../types/order';
+import { apiFetch } from '../lib/api';
+import { products } from '../data/products';
 
 function formatDate(iso: string) {
   try {
@@ -56,7 +58,53 @@ export function OrderDetail() {
   const [searchParams] = useSearchParams();
   const thankYou = searchParams.get('thankYou') === '1';
   const { getOrder } = useShop();
-  const order = orderId ? getOrder(orderId) : undefined;
+  const localOrder = orderId ? getOrder(orderId) : undefined;
+  const [serverOrder, setServerOrder] = useState<any>(null);
+
+  useEffect(() => {
+    if (!orderId) return;
+    apiFetch<any>(`/orders/${orderId}`)
+      .then((data) => setServerOrder(data))
+      .catch(() => setServerOrder(null));
+  }, [orderId]);
+
+  const order = useMemo(() => {
+    if (serverOrder) {
+      const normalizedItems = (serverOrder.items || []).map((item: any) => {
+        const product = products.find((p) => p.id === item.productId);
+        return {
+          productId: item.productId,
+          name: item.name,
+          image: product?.image || 'https://picsum.photos/seed/mbt-order-item/200/200',
+          quantity: item.quantity,
+          unitPrice: item.price,
+          lineTotal: item.price * item.quantity,
+          color: undefined,
+          material: undefined,
+          size: undefined,
+        };
+      });
+      return {
+        id: serverOrder.id,
+        createdAt: serverOrder.createdAt,
+        status: serverOrder.status as OrderStatus,
+        paymentMethod: serverOrder.paymentMethod?.toLowerCase().includes('vnpay') ? 'vnpay' : 'cod',
+        paymentStatus: serverOrder.paymentMethod?.toLowerCase().includes('vnpay') ? 'paid' : 'pending',
+        customerName: serverOrder.customerName,
+        phone: serverOrder.phone || '—',
+        email: serverOrder.customerEmail || '—',
+        address: serverOrder.shippingAddress || '—',
+        note: serverOrder.note,
+        items: normalizedItems,
+        subtotal: normalizedItems.reduce((sum: number, x: any) => sum + x.lineTotal, 0),
+        shippingFee: Math.max((serverOrder.total || 0) - normalizedItems.reduce((sum: number, x: any) => sum + x.lineTotal, 0), 0),
+        total: serverOrder.total || 0,
+        trackingNumber: serverOrder.trackingNumber,
+        estimatedDelivery: serverOrder.estimatedDelivery,
+      };
+    }
+    return localOrder;
+  }, [serverOrder, localOrder]);
 
   if (!order) {
     return (

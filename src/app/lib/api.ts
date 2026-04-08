@@ -6,7 +6,12 @@ export async function apiFetch<T = unknown>(path: string, options: RequestInit =
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`/api${path}`, { ...options, headers });
+  let res: Response;
+  try {
+    res = await fetch(`/api${path}`, { ...options, headers });
+  } catch {
+    throw new Error('Không thể kết nối máy chủ API. Vui lòng kiểm tra backend.');
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error((data as { message?: string }).message || `HTTP ${res.status}`);
   return data as T;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Eye, X, Loader2 } from 'lucide-react';
+import { Eye, X, Loader2, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { apiFetch } from '../../lib/api';
 
@@ -55,11 +55,19 @@ export function AdminOrders() {
   const [selected, setSelected] = useState<Order | null>(null);
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
+    setError(null);
     const url = statusFilter ? `/orders?status=${statusFilter}` : '/orders';
-    apiFetch<Order[]>(url).then(setOrders).catch(console.error).finally(() => setLoading(false));
+    apiFetch<Order[]>(url)
+      .then(setOrders)
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Không thể tải danh sách đơn hàng.');
+        setOrders([]);
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, [statusFilter]);
@@ -104,6 +112,18 @@ export function AdminOrders() {
           </button>
         ))}
       </div>
+      {error && (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          <span>{error}</span>
+          <button
+            onClick={load}
+            className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-amber-800 border border-amber-200 hover:bg-amber-100"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            Tải lại
+          </button>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Search, X, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, X, Loader2, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { apiFetch } from '../../lib/api';
+import { FallbackImage } from '../../components/ui/FallbackImage';
 
 interface Product {
   id: string;
@@ -41,10 +42,18 @@ export function AdminProducts() {
   const [form, setForm] = useState(EMPTY_PRODUCT);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
-    apiFetch<Product[]>('/products').then(setProducts).catch(console.error).finally(() => setLoading(false));
+    setError(null);
+    apiFetch<Product[]>('/products')
+      .then(setProducts)
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Không thể tải danh sách sản phẩm.');
+        setProducts([]);
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);
@@ -112,6 +121,18 @@ export function AdminProducts() {
           className="w-full pl-10 pr-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm"
         />
       </div>
+      {error && (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          <span>{error}</span>
+          <button
+            onClick={load}
+            className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-amber-800 border border-amber-200 hover:bg-amber-100"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            Tải lại
+          </button>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (
@@ -137,7 +158,12 @@ export function AdminProducts() {
                   <tr key={product.id} className="hover:bg-neutral-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover bg-neutral-100" />
+                        <FallbackImage
+                          src={product.image}
+                          fallbackSrc="https://picsum.photos/seed/mbt-admin-product/120/120"
+                          alt={product.name}
+                          className="w-12 h-12 rounded-lg object-cover bg-neutral-100"
+                        />
                         <div>
                           <p className="font-medium">{product.name}</p>
                           <p className="text-xs text-neutral-500">ID: {product.id}</p>
